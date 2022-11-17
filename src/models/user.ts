@@ -2,6 +2,7 @@ import { Schema, Types, model } from "mongoose";
 
 
 interface User{
+    _id: Types.ObjectId,
     accountName: string,
     username: string,
     email: string,
@@ -9,7 +10,6 @@ interface User{
     img: string,
     follower: Types.ObjectId[],
     following: Types.ObjectId[],
-    bookId: Types.ObjectId
 }
 
 const userSchema = new Schema<User>({
@@ -20,8 +20,6 @@ const userSchema = new Schema<User>({
     img: String,
     follower: [Types.ObjectId],
     following: [Types.ObjectId],
-    bookId: Types.ObjectId
-
 })
 
 const user = model("User",userSchema)

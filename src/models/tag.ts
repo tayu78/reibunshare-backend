@@ -1,6 +1,7 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 
 interface Tag {
+    _id: Types.ObjectId,
     name: string
 }
 
