@@ -1,9 +1,7 @@
 import { Schema, model, Types } from "mongoose";
+import { ITag } from "../types";
 
-interface ITag {
-    _id: Types.ObjectId,
-    name: string
-}
+
 
 const tagSchema = new Schema<ITag>({
     name: String

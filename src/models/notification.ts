@@ -1,11 +1,6 @@
 import { Schema, Types, model } from "mongoose";
+import { INotification } from "../types";
 
-interface INotification {
-    _id: Types.ObjectId,
-    sendTo: Types.ObjectId[],
-    content: string,
-    createdAt: Date
-}
 
 const notificationSchema = new Schema<INotification>({
     sendTo: [Types.ObjectId],

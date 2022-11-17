@@ -1,17 +1,5 @@
 import { Schema, Types, model } from "mongoose";
-import { Reibun } from "../types/card"
-
-interface ICard {
-    _id: Types.ObjectId,
-    userId: Types.ObjectId,
-    reibun: Reibun[]
-    description: string,
-    img: string,
-    likes: Types.ObjectId[],
-    tags: Types.ObjectId[]
-    createdAt: Date,
-    updatedAt: Date
-}
+import {ICard} from "../types"
 
 
 

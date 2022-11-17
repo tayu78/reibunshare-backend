@@ -1,11 +1,5 @@
 import { Schema, Types, model } from "mongoose";
-
-interface IBook {
-    _id: Types.ObjectId,
-    createdBy: Types.ObjectId,
-    cards: Types.ObjectId[],
-    description: string
-}
+import { IBook } from "../types";
 
 
 const bookSchema = new Schema<IBook>({
