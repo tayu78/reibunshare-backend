@@ -1,17 +1,17 @@
 import { Schema, Types, model } from "mongoose";
 
-interface Notification {
+interface INotification {
     _id: Types.ObjectId,
     sendTo: Types.ObjectId[],
     content: string,
     createdAt: Date
 }
 
-const notificationSchema = new Schema<Notification>({
+const notificationSchema = new Schema<INotification>({
     sendTo: [Types.ObjectId],
     content: String,
 },{timestamps: true})
 
-const notification = model("Notification",notificationSchema)
+const Notification = model("Notification",notificationSchema)
 
-export default notification;
+export default Notification;

@@ -1,14 +1,14 @@
 import { Schema, model, Types } from "mongoose";
 
-interface Tag {
+interface ITag {
     _id: Types.ObjectId,
     name: string
 }
 
-const tagSchema = new Schema<Tag>({
+const tagSchema = new Schema<ITag>({
     name: String
 })
 
-const card = model("Tag", tagSchema)
+const Tag = model("Tag", tagSchema)
 
-export default card;
+export default Tag;

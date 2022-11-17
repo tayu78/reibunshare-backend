@@ -1,7 +1,7 @@
 import { Schema, Types, model } from "mongoose";
 import { Reibun } from "../types/card"
 
-interface Card {
+interface ICard {
     _id: Types.ObjectId,
     userId: Types.ObjectId,
     reibun: Reibun[]
@@ -15,7 +15,7 @@ interface Card {
 
 
 
-const cardSchema = new Schema<Card>({
+const cardSchema = new Schema<ICard>({
     userId: Types.ObjectId,
     reibun: [{}],
     description: String,
@@ -24,6 +24,6 @@ const cardSchema = new Schema<Card>({
     tags: [Types.ObjectId]
 },{timestamps: true})
 
-const card = model("Card", cardSchema)
+const Card = model("Card", cardSchema)
 
-export default card;
+export default Card;

@@ -1,6 +1,6 @@
 import { Schema, Types, model } from "mongoose";
 
-interface Book {
+interface IBook {
     _id: Types.ObjectId,
     createdBy: Types.ObjectId,
     cards: Types.ObjectId[],
@@ -8,12 +8,12 @@ interface Book {
 }
 
 
-const bookSchema = new Schema<Book>({
+const bookSchema = new Schema<IBook>({
     createdBy: Types.ObjectId,
     cards: [Types.ObjectId],
     description: String
 })
 
-const book = model("Book", bookSchema)
+const Book = model("Book", bookSchema)
 
-export default book;
+export default Book;
