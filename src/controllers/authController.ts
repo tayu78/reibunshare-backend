@@ -1,5 +1,4 @@
 import { RequestHandler } from "express";
-import { nextTick } from "process";
 import User from "../models/user";
 
 export const signup: RequestHandler = async (req, res, next) => {
@@ -12,7 +11,6 @@ export const signup: RequestHandler = async (req, res, next) => {
     }
 
     const isUsedEmail = await User.findOne({ email });
-    console.log(isUsedEmail);
     if (isUsedEmail) {
       return res.status(400).json({
         message: "User with provided email already exists.",
@@ -32,7 +30,7 @@ export const signup: RequestHandler = async (req, res, next) => {
       password,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "New user sccessfully signed up !",
       user,
     });
@@ -43,9 +41,10 @@ export const signup: RequestHandler = async (req, res, next) => {
 
 export const login: RequestHandler = async (req, res, next) => {
   const { email, password } = req.body;
+  console.log(email, password);
   try {
     if (!email || !password) {
-      res.status(400).json({
+      return res.status(400).json({
         message: "Please fill all required input.",
       });
     }
