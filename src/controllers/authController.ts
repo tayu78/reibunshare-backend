@@ -1,4 +1,5 @@
 import { RequestHandler } from "express";
+import jwt from "jsonwebtoken";
 import User from "../models/user";
 
 export const signup: RequestHandler = async (req, res, next) => {
@@ -30,9 +31,14 @@ export const signup: RequestHandler = async (req, res, next) => {
       password,
     });
 
+    const token = jwt.sign({ user }, process.env.JWT_SECRET!, {
+      expiresIn: process.env.AUTH_EXPIRESIN!,
+    });
+
     return res.status(201).json({
       message: "New user sccessfully signed up !",
       user,
+      token,
     });
   } catch (err) {
     next(err);
@@ -55,9 +61,14 @@ export const login: RequestHandler = async (req, res, next) => {
       });
     }
 
+    const token = jwt.sign({ user }, process.env.JWT_SECRET!, {
+      expiresIn: process.env.AUTH_EXPIRESIN!,
+    });
+
     return res.status(200).json({
       message: "User logged in successfully!",
       user,
+      token,
     });
   } catch (err) {
     next(err);
