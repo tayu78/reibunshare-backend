@@ -4,8 +4,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 
-import userRoutes from "./routes/userRoutes";
 import authRoutes from "./routes/authRoutes";
+import userRoutes from "./routes/userRoutes";
+import cardRoutes from "./routes/cardRoutes";
 import errorHandler from "./middleware/errorHandler";
 
 dotenv.config();
@@ -25,8 +26,9 @@ app.use(json());
 
 app.use(cors());
 
-app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/cards", cardRoutes);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
