@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import authRoutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
 import cardRoutes from "./routes/cardRoutes";
+import bookRoutes from "./routes/bookRoutes";
 import errorHandler from "./middleware/errorHandler";
 
 dotenv.config();
@@ -29,6 +30,7 @@ app.use(cors());
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/cards", cardRoutes);
+app.use("/api/v1/books", bookRoutes);
 app.use(errorHandler);
 
 app.listen(PORT, () => {

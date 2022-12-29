@@ -13,6 +13,7 @@ export interface IUser {
 
 export interface IBook {
   _id: Types.ObjectId;
+  name: string;
   createdBy: Types.ObjectId;
   cards: Types.ObjectId[];
   description: string;

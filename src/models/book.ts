@@ -4,6 +4,7 @@ import { IBook } from "../types";
 const bookSchema = new Schema<IBook>({
   createdBy: Types.ObjectId,
   cards: [Types.ObjectId],
+  name: String,
   description: String,
 });
 

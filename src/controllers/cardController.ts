@@ -7,16 +7,19 @@ export const makeCard: RequestHandler = async (req, res, next) => {
   const { phrase, usages, description, img, meaning, tags } = req.body;
 
   try {
-    const createTagPromise = tags.map(({ name }: { name: string }) => {
-      return Tag.findOneAndUpdate(
-        { name },
-        { name },
-        { upsert: true, new: true }
-      );
-    });
+    let tagIds = [];
+    if (tags) {
+      const createTagPromise = tags.map(({ name }: { name: string }) => {
+        return Tag.findOneAndUpdate(
+          { name },
+          { name },
+          { upsert: true, new: true }
+        );
+      });
 
-    const cardTags = await Promise.all(createTagPromise);
-    const tagIds = cardTags.map(({ _id }) => _id);
+      const cardTags = await Promise.all(createTagPromise);
+      tagIds = cardTags?.map(({ _id }) => _id);
+    }
 
     const card = await Card.create({
       userId: user._id,
@@ -46,7 +49,7 @@ export const getCard: RequestHandler = async (req, res, next) => {
           localField: "userId",
           foreignField: "_id",
           as: "user",
-          pipeline: [{ $project: { _id: 0, accountName: 1, img: 1 } }],
+          pipeline: [{ $project: { accountName: 1, img: 1 } }],
         },
       },
       {
