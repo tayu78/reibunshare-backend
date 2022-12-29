@@ -1,9 +1,10 @@
 import express from "express";
 import checkAuth from "../middleware/checkAuth";
-import { makeCard } from "../controllers/cardController";
+import { getCard, makeCard } from "../controllers/cardController";
 
 const router = express.Router();
 
+router.get("/", getCard);
 router.post("/", checkAuth, makeCard);
 
 export default router;

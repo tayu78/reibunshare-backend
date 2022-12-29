@@ -37,8 +37,35 @@ export const makeCard: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const getCard: RequestHandler = (req, res, next) => {
+export const getCard: RequestHandler = async (req, res, next) => {
   try {
+    const cards = await Card.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "user",
+          pipeline: [{ $project: { _id: 0, accountName: 1, img: 1 } }],
+        },
+      },
+      {
+        $unwind: "$user",
+      },
+      {
+        $lookup: {
+          from: "tags",
+          localField: "tags",
+          foreignField: "_id",
+          as: "tags",
+          pipeline: [{ $project: { _id: 0, name: 1 } }],
+        },
+      },
+    ]);
+
+    return res.status(200).json({
+      cards,
+    });
   } catch (err) {
     next(err);
   }
