@@ -83,12 +83,11 @@ export const manageLikes: RequestHandler = async (req, res, next) => {
         message: "Card with provided Id does not exist.",
       });
     }
-    if (isLike) card.likes.push(user._id);
+    if (isLike === "true") card.likes.push(user._id);
     else
       card.likes = card.likes.filter((id) => {
-        id !== user._id;
+        return !id.equals(user._id);
       });
-
     await card.save();
 
     return res.status(200).json({
