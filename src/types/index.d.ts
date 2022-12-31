@@ -1,6 +1,9 @@
-import { Types } from "mongoose";
+import { Types, Document } from "mongoose";
 
-export interface IUser {
+interface MongoDoc {
+  _doc: any;
+}
+export interface IUser extends MongoDoc {
   _id: Types.ObjectId;
   accountName: string;
   username: string;
@@ -11,7 +14,7 @@ export interface IUser {
   following: Types.ObjectId[];
 }
 
-export interface IBook {
+export interface IBook extends MongoDoc {
   _id: Types.ObjectId;
   name: string;
   createdBy: Types.ObjectId;
@@ -19,7 +22,7 @@ export interface IBook {
   description: string;
 }
 
-export interface ICard {
+export interface ICard extends MongoDoc {
   _id: Types.ObjectId;
   userId: Types.ObjectId;
   phrase: string;
@@ -33,14 +36,14 @@ export interface ICard {
   updatedAt: Date;
 }
 
-export interface INotification {
+export interface INotification extends MongoDoc {
   _id: Types.ObjectId;
   sendTo: Types.ObjectId[];
   content: string;
   createdAt: Date;
 }
 
-export interface ITag {
+export interface ITag extends MongoDoc {
   _id: Types.ObjectId;
   name: string;
 }
