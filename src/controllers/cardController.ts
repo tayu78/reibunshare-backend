@@ -1,4 +1,5 @@
 import { RequestHandler } from "express";
+import { Types } from "mongoose";
 import Card from "../models/card";
 import Tag from "../models/tag";
 
@@ -40,7 +41,7 @@ export const makeCard: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const getCard: RequestHandler = async (req, res, next) => {
+export const getCards: RequestHandler = async (req, res, next) => {
   try {
     const cards = await Card.aggregate([
       {
@@ -95,6 +96,52 @@ export const manageLikes: RequestHandler = async (req, res, next) => {
 
     return res.status(200).json({
       message: "likes for the card is successfully managed.",
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getBookCards: RequestHandler = async (req, res, next) => {
+  const { cardIds } = req.body;
+  try {
+    const bookCards = await Card.aggregate([
+      {
+        $match: {
+          _id: { $in: cardIds.map((id: string) => new Types.ObjectId(id)) },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "user",
+          pipeline: [{ $project: { accountName: 1, img: 1 } }],
+        },
+      },
+      {
+        $unwind: "$user",
+      },
+      {
+        $lookup: {
+          from: "tags",
+          localField: "tags",
+          foreignField: "_id",
+          as: "tags",
+          pipeline: [{ $project: { _id: 0, name: 1 } }],
+        },
+      },
+    ]).sort({ createdAt: -1 });
+
+    if (bookCards.length === 0) {
+      return res.status(404).json({
+        message: "Cards of the Book with provided Ids do not exist.",
+      });
+    }
+
+    return res.status(200).json({
+      bookCards,
     });
   } catch (err) {
     next(err);
