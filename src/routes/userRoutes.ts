@@ -1,11 +1,16 @@
 import express from "express";
 
-import { getUserData, manageFollowing } from "../controllers/userController";
+import {
+  getLoggedInUserProfile,
+  manageFollowing,
+  getOtherUserProfile,
+} from "../controllers/userController";
 import checkAuth from "../middleware/checkAuth";
 
 const router = express.Router();
 
-router.get("/me", checkAuth, getUserData);
-router.put("/:followingUserId/manageFollowing", checkAuth, manageFollowing);
+router.get("/me", checkAuth, getLoggedInUserProfile);
+router.get("/them/:userId", getOtherUserProfile);
+router.put("/:followingUserId/manageFollowing", manageFollowing);
 
 export default router;

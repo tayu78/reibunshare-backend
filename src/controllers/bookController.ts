@@ -1,6 +1,35 @@
 import { RequestHandler } from "express";
 import Book from "../models/book";
 
+export const getBook: RequestHandler = async (req, res, next) => {
+  const { bookId } = req.params;
+  try {
+    const book = await Book.findById(bookId);
+    if (!book) {
+      return res.status(404).json({
+        message: "The book with provided ID does not exist.",
+      });
+    }
+    return res.status(200).json({
+      book,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getUserBooks: RequestHandler = async (req, res, next) => {
+  const { userId } = req.params;
+  try {
+    const books = await Book.find({ createdBy: userId });
+    return res.status(200).json({
+      books,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const newBook: RequestHandler = async (req, res, next) => {
   const { user } = req.userData!;
   const { bookName, bookDescription, cardId } = req.body;

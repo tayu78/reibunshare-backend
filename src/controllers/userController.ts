@@ -3,7 +3,11 @@ import { Types } from "mongoose";
 import User from "../models/user";
 import Book from "../models/book";
 
-export const getUserData: RequestHandler = async (req, res, next) => {
+export const getLoggedInUserProfile: RequestHandler = async (
+  req,
+  res,
+  next
+) => {
   const { user } = req.userData!;
   try {
     const userBooks = await Book.find({
@@ -14,6 +18,23 @@ export const getUserData: RequestHandler = async (req, res, next) => {
         ...user._doc,
         userBooks,
       },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getOtherUserProfile: RequestHandler = async (req, res, next) => {
+  const { userId } = req.params;
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        message: "User with provided Id does not exist.",
+      });
+    }
+    return res.status(200).json({
+      user,
     });
   } catch (err) {
     next(err);
