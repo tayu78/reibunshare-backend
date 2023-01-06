@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import { Types } from "mongoose";
 import User from "../models/user";
 import Book from "../models/book";
+import uploadFile from "../utils/uploadFile";
 
 export const getLoggedInUserProfile: RequestHandler = async (
   req,
@@ -44,6 +45,33 @@ export const getOtherUserProfile: RequestHandler = async (req, res, next) => {
 export const updateUserInfo: RequestHandler = async (req, res, next) => {
   const { user } = req.userData!;
   try {
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateProfileImg: RequestHandler = async (req, res, next) => {
+  const { user: u } = req.userData!;
+
+  try {
+    const user = new User(u);
+
+    if (!req.file) {
+      return res.status(400).json({
+        message: "Please upload profile image.",
+      });
+    }
+    const { url } = await uploadFile(
+      req.file.filename,
+      u._id.toHexString(),
+      "users"
+    );
+    user.img = url;
+    await user.save();
+
+    return res.status(200).json({
+      message: "User's profile image updated successfully!!",
+    });
   } catch (err) {
     next(err);
   }
