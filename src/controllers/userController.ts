@@ -124,3 +124,21 @@ export const manageFollowing: RequestHandler = async (req, res, next) => {
     next(err);
   }
 };
+
+export const searchUser: RequestHandler = async (req, res, next) => {
+  const { keyword } = req.query;
+  try {
+    const users = await User.find({
+      $or: [
+        { accountName: { $regex: keyword, $options: "i" } },
+        { username: { $regex: keyword, $options: "i" } },
+      ],
+    });
+
+    return res.status(200).json({
+      users,
+    });
+  } catch (err) {
+    next(err);
+  }
+};

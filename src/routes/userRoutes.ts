@@ -5,6 +5,7 @@ import {
   getOtherUserProfile,
   updateProfileInfo,
   updateProfileImg,
+  searchUser,
 } from "../controllers/userController";
 import checkAuth from "../middleware/checkAuth";
 import upload from "../middleware/multer";
@@ -21,5 +22,6 @@ router.put(
   upload.single("profileImg"),
   updateProfileImg
 );
+router.get("/search", searchUser);
 
 export default router;
