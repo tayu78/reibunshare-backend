@@ -42,9 +42,19 @@ export const getOtherUserProfile: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const updateUserInfo: RequestHandler = async (req, res, next) => {
-  const { user } = req.userData!;
+export const updateProfileInfo: RequestHandler = async (req, res, next) => {
+  const { user: u } = req.userData!;
+  const { username, email } = req.body;
   try {
+    const user = new User(u);
+
+    if (username) user.username = username;
+    if (email) user.email = email;
+    await user.save();
+
+    return res.status(200).json({
+      message: "User information updated successfully!!",
+    });
   } catch (err) {
     next(err);
   }

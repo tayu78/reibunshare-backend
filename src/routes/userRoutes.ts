@@ -3,6 +3,7 @@ import {
   getLoggedInUserProfile,
   manageFollowing,
   getOtherUserProfile,
+  updateProfileInfo,
   updateProfileImg,
 } from "../controllers/userController";
 import checkAuth from "../middleware/checkAuth";
@@ -13,6 +14,7 @@ const router = express.Router();
 router.get("/me", checkAuth, getLoggedInUserProfile);
 router.get("/them/:userId", getOtherUserProfile);
 router.put("/:followingUserId/manageFollowing", checkAuth, manageFollowing);
+router.put("/updateProfileInfo", checkAuth, updateProfileInfo);
 router.put(
   "/updateProfileImg",
   checkAuth,
