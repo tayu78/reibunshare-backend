@@ -147,3 +147,27 @@ export const getBookCards: RequestHandler = async (req, res, next) => {
     next(err);
   }
 };
+
+export const searchCardByTag: RequestHandler = async (req, res, next) => {
+  const { keyword } = req.query;
+  /**
+   * tags = [obectID(fghfnhmg),obectID(fgdgfhj),obectID(hgjhkgjlhk)]
+   * keyword = "Japanese"
+   */
+  try {
+    const tagIds = await Tag.find({ name: { $regex: keyword, $options: "i" } });
+    if (tagIds.length === 0) {
+      return res.status(200).json({ cards: [] });
+    }
+
+    const cards = await Card.find({
+      tags: { $in: tagIds },
+    });
+
+    return res.status(200).json({
+      cards,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
