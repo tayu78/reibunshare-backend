@@ -150,19 +150,32 @@ export const getBookCards: RequestHandler = async (req, res, next) => {
 
 export const searchCardByTag: RequestHandler = async (req, res, next) => {
   const { keyword } = req.query;
-  /**
-   * tags = [obectID(fghfnhmg),obectID(fgdgfhj),obectID(hgjhkgjlhk)]
-   * keyword = "Japanese"
-   */
   try {
-    const tagIds = await Tag.find({ name: { $regex: keyword, $options: "i" } });
+    const tagIds = await Tag.find({
+      name: { $regex: keyword, $options: "i" },
+    }).select({ _id: 1 });
+
     if (tagIds.length === 0) {
       return res.status(200).json({ cards: [] });
     }
 
-    const cards = await Card.find({
-      tags: { $in: tagIds },
-    });
+    const cards = await Card.aggregate([
+      {
+        $match: { tags: { $in: tagIds.map((obj) => obj._id) } },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "user",
+          pipeline: [{ $project: { accountName: 1, img: 1 } }],
+        },
+      },
+      {
+        $unwind: "$user",
+      },
+    ]);
 
     return res.status(200).json({
       cards,
