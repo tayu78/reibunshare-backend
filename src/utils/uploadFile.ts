@@ -8,7 +8,7 @@ const uploadFile = async (filename: string, id: string, foldername: string) => {
     overwrite: true,
   });
 
-  fs.unlink(`${filename}`, (err) => {
+  fs.unlink(filename, (err) => {
     if (err) throw err;
     console.log("file successfully deleted");
   });

@@ -72,7 +72,7 @@ export const updateProfileImg: RequestHandler = async (req, res, next) => {
       });
     }
     const { url } = await uploadFile(
-      req.file.filename,
+      `/tmp/${req.file.filename}`,
       u._id.toHexString(),
       "users"
     );
