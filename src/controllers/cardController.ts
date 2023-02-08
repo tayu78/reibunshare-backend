@@ -92,9 +92,6 @@ export const manageLikes: RequestHandler = async (req, res, next) => {
         return !id.equals(user._id);
       });
     await card.save();
-
-    console.log("card", card.likes);
-
     return res.status(200).json({
       message: "likes for the card is successfully managed.",
     });
