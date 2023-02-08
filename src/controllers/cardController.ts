@@ -79,7 +79,6 @@ export const manageLikes: RequestHandler = async (req, res, next) => {
   const { cardId } = req.params;
   const { isLike } = req.query;
   const { user } = req.userData!;
-
   try {
     const card = await Card.findById(cardId);
     if (!card) {
@@ -93,6 +92,8 @@ export const manageLikes: RequestHandler = async (req, res, next) => {
         return !id.equals(user._id);
       });
     await card.save();
+
+    console.log("card", card.likes);
 
     return res.status(200).json({
       message: "likes for the card is successfully managed.",
