@@ -42,6 +42,12 @@ export interface INotification extends MongoDoc {
   content: string;
   createdAt: Date;
 }
+export interface IOnlineUser extends MongoDoc {
+  _id: Types.ObjectId;
+  userId: Types.ObjectId;
+  socketId: string;
+  createdAt: Date;
+}
 
 export interface ITag extends MongoDoc {
   _id: Types.ObjectId;
