@@ -1,0 +1,1 @@
+export const NOTIFICATION_SEND_NUM = 10;

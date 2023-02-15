@@ -39,7 +39,9 @@ export interface ICard extends MongoDoc {
 export interface INotification extends MongoDoc {
   _id: Types.ObjectId;
   sendTo: Types.ObjectId[];
+  sendFrom: Types.ObjectId;
   content: string;
+  isRead: boolean;
   createdAt: Date;
 }
 export interface IOnlineUser extends MongoDoc {

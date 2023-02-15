@@ -49,9 +49,10 @@ const io = (http: http.Server) => {
 
       if (user.length === 0) return;
 
-      const content = `@${user[0].user.accountName} just followed you`;
+      const content = `@${user[0].user.accountName} followed you`;
       const notification = await Notification.create({
         sendTo: followingUserId,
+        sendFrom: user[0].user._id,
         content,
       });
 
