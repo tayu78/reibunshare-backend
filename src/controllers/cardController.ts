@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import { Types } from "mongoose";
 import Card from "../models/card";
 import Tag from "../models/tag";
+import Comment from "../models/comment";
 
 export const makeCard: RequestHandler = async (req, res, next) => {
   const { user } = req.userData!;
@@ -35,6 +36,52 @@ export const makeCard: RequestHandler = async (req, res, next) => {
     return res.status(201).json({
       message: "New card created successfully!!",
       card,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getCard: RequestHandler = async (req, res, next) => {
+  const { cardId } = req.params;
+  try {
+    // const card = await Card.findById(cardId);
+    const card = await Card.aggregate([
+      {
+        $match: {
+          _id: new Types.ObjectId(cardId),
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "user",
+          pipeline: [{ $project: { accountName: 1, img: 1 } }],
+        },
+      },
+      {
+        $unwind: "$user",
+      },
+      {
+        $lookup: {
+          from: "tags",
+          localField: "tags",
+          foreignField: "_id",
+          as: "tags",
+          pipeline: [{ $project: { _id: 0, name: 1 } }],
+        },
+      },
+    ]);
+
+    if (card.length === 0) {
+      return res.status(404).json({
+        message: "Card with provided ID does not exist.",
+      });
+    }
+    return res.status(200).json({
+      card: card[0],
     });
   } catch (err) {
     next(err);
@@ -177,6 +224,55 @@ export const searchCardByTag: RequestHandler = async (req, res, next) => {
 
     return res.status(200).json({
       cards,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getComments: RequestHandler = async (req, res, next) => {
+  const { cardId } = req.params;
+  try {
+    const comments = await Comment.aggregate([
+      {
+        $match: {
+          cardId: new Types.ObjectId(cardId),
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "user",
+          pipeline: [{ $project: { accountName: 1, img: 1 } }],
+        },
+      },
+      { $unwind: "$user" },
+    ]).sort({ createdAt: -1 });
+    res.status(200).json({
+      comments,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const makeComment: RequestHandler = async (req, res, next) => {
+  const { user } = req.userData!;
+  const { cardId } = req.params;
+  const { content } = req.body;
+
+  try {
+    const comment = await Comment.create({
+      userId: user._id,
+      cardId,
+      content,
+    });
+
+    res.status(201).json({
+      message: "New comment created successfully!!",
+      comment,
     });
   } catch (err) {
     next(err);

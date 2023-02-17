@@ -56,6 +56,13 @@ export interface ITag extends MongoDoc {
   name: string;
 }
 
+export interface IComment extends MongoDoc {
+  _id: Types.ObjectId;
+  userId: Types.ObjectId;
+  cardId: Types.ObjectId;
+  content: string;
+}
+
 export interface Reibun {
   A?: string;
   B?: string;
