@@ -122,6 +122,59 @@ export const getCards: RequestHandler = async (req, res, next) => {
   }
 };
 
+export const getCardsOfFollowingUser: RequestHandler = async (
+  req,
+  res,
+  next
+) => {
+  const { user } = req.userData!;
+  try {
+    console.log("user>>>>>", user);
+
+    // const cards = await Card.find({
+    //   userId: { $in: user.following },
+    // });
+    const cards = await Card.aggregate([
+      {
+        $match: {
+          userId: {
+            $in: user.following,
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "_id",
+          as: "user",
+          pipeline: [{ $project: { accountName: 1, img: 1 } }],
+        },
+      },
+      {
+        $unwind: "$user",
+      },
+      {
+        $lookup: {
+          from: "tags",
+          localField: "tags",
+          foreignField: "_id",
+          as: "tags",
+          pipeline: [{ $project: { _id: 0, name: 1 } }],
+        },
+      },
+    ]).sort({ createdAt: -1 });
+
+    console.log("card:>>>>>>>>>>>", cards);
+
+    res.status(200).json({
+      cards,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const manageLikes: RequestHandler = async (req, res, next) => {
   const { cardId } = req.params;
   const { isLike } = req.query;

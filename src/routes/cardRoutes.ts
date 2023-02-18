@@ -9,11 +9,13 @@ import {
   getComments,
   makeComment,
   getCard,
+  getCardsOfFollowingUser,
 } from "../controllers/cardController";
 
 const router = express.Router();
 
 router.get("/", getCards);
+router.get("/getCardsOfFollowingUser", checkAuth, getCardsOfFollowingUser);
 router.post("/getBookCards", checkAuth, getBookCards);
 router.post("/", checkAuth, makeCard);
 router.put("/likes/:cardId", checkAuth, manageLikes);
