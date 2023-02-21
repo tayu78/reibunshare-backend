@@ -186,8 +186,14 @@ export const manageLikes: RequestHandler = async (req, res, next) => {
         message: "Card with provided Id does not exist.",
       });
     }
-    if (isLike === "true") card.likes.push(user._id);
-    else
+    if (isLike === "true") {
+      if (card.likes.includes(user._id)) {
+        return res.status(200).json({
+          message: "likes for the card is successfully managed.",
+        });
+      }
+      card.likes.push(user._id);
+    } else
       card.likes = card.likes.filter((id) => {
         return !id.equals(user._id);
       });
@@ -272,6 +278,15 @@ export const searchCardByTag: RequestHandler = async (req, res, next) => {
       },
       {
         $unwind: "$user",
+      },
+      {
+        $lookup: {
+          from: "tags",
+          localField: "tags",
+          foreignField: "_id",
+          as: "tags",
+          pipeline: [{ $project: { _id: 0, name: 1 } }],
+        },
       },
     ]);
 
