@@ -131,9 +131,6 @@ export const getCardsOfFollowingUser: RequestHandler = async (
   try {
     console.log("user>>>>>", user);
 
-    // const cards = await Card.find({
-    //   userId: { $in: user.following },
-    // });
     const cards = await Card.aggregate([
       {
         $match: {
@@ -164,8 +161,6 @@ export const getCardsOfFollowingUser: RequestHandler = async (
         },
       },
     ]).sort({ createdAt: -1 });
-
-    console.log("card:>>>>>>>>>>>", cards);
 
     res.status(200).json({
       cards,
@@ -252,43 +247,77 @@ export const getBookCards: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const searchCardByTag: RequestHandler = async (req, res, next) => {
-  const { keyword } = req.query;
+export const searchCard: RequestHandler = async (req, res, next) => {
+  const { keyword, type } = req.query;
   try {
-    const tagIds = await Tag.find({
-      name: { $regex: keyword, $options: "i" },
-    }).select({ _id: 1 });
+    let cards;
+    if (type === "tag") {
+      const tagIds = await Tag.find({
+        name: { $regex: keyword, $options: "i" },
+      }).select({ _id: 1 });
 
-    if (tagIds.length === 0) {
-      return res.status(200).json({ cards: [] });
+      if (tagIds.length === 0) {
+        return res.status(200).json({ cards: [] });
+      }
+
+      cards = await Card.aggregate([
+        {
+          $match: { tags: { $in: tagIds.map((obj) => obj._id) } },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "user",
+            pipeline: [{ $project: { accountName: 1, img: 1 } }],
+          },
+        },
+        {
+          $unwind: "$user",
+        },
+        {
+          $lookup: {
+            from: "tags",
+            localField: "tags",
+            foreignField: "_id",
+            as: "tags",
+            pipeline: [{ $project: { _id: 0, name: 1 } }],
+          },
+        },
+      ]);
+    } else if (type === "phrase") {
+      cards = await Card.aggregate([
+        {
+          $match: { phrase: { $regex: keyword, $options: "i" } },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "user",
+            pipeline: [{ $project: { accountName: 1, img: 1 } }],
+          },
+        },
+        {
+          $unwind: "$user",
+        },
+        {
+          $lookup: {
+            from: "tags",
+            localField: "tags",
+            foreignField: "_id",
+            as: "tags",
+            pipeline: [{ $project: { _id: 0, name: 1 } }],
+          },
+        },
+      ]);
+    } else {
+      return res.status(400).json({
+        message: "Please provide valid search type.",
+      });
     }
-
-    const cards = await Card.aggregate([
-      {
-        $match: { tags: { $in: tagIds.map((obj) => obj._id) } },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "userId",
-          foreignField: "_id",
-          as: "user",
-          pipeline: [{ $project: { accountName: 1, img: 1 } }],
-        },
-      },
-      {
-        $unwind: "$user",
-      },
-      {
-        $lookup: {
-          from: "tags",
-          localField: "tags",
-          foreignField: "_id",
-          as: "tags",
-          pipeline: [{ $project: { _id: 0, name: 1 } }],
-        },
-      },
-    ]);
 
     return res.status(200).json({
       cards,

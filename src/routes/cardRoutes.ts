@@ -5,7 +5,7 @@ import {
   getBookCards,
   makeCard,
   manageLikes,
-  searchCardByTag,
+  searchCard,
   getComments,
   makeComment,
   getCard,
@@ -19,7 +19,7 @@ router.get("/getCardsOfFollowingUser", checkAuth, getCardsOfFollowingUser);
 router.post("/getBookCards", checkAuth, getBookCards);
 router.post("/", checkAuth, makeCard);
 router.put("/likes/:cardId", checkAuth, manageLikes);
-router.get("/search", searchCardByTag);
+router.get("/search", searchCard);
 router.get("/comments/:cardId", checkAuth, getComments);
 router.post("/comments/:cardId", checkAuth, makeComment);
 router.get("/:cardId", getCard);
